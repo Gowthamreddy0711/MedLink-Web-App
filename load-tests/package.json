@@ -1,0 +1,17 @@
+{
+  "name": "medlink-load-test-reporter",
+  "version": "1.0.0",
+  "description": "Generates Excel + HTML reports from k6 JSON output for MedLink load tests",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "report": "node generate-excel-report.js"
+  },
+  "dependencies": {
+    "exceljs": "4.4.0",
+    "fs-extra": "11.2.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

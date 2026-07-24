@@ -1,0 +1,192 @@
+name: MedLink Baseline Load Test (100 VUs · 1 min)
+
+on:
+  # Run manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'Base URL to test (e.g. https://medlink-1eb0e6f3.web.app)'
+        required: false
+        default: 'https://medlink-1eb0e6f3.web.app'
+      vus:
+        description: 'Number of virtual users'
+        required: false
+        default: '100'
+      duration:
+        description: 'Test duration (e.g. 1m)'
+        required: false
+        default: '1m'
+
+  # Also auto-run on push to main / master
+  push:
+    branches: [main, master]
+    paths:
+      - 'load-tests/**'
+      - '.github/workflows/load-test.yml'
+
+  # Scheduled: every Monday at 08:00 UTC
+  schedule:
+    - cron: '0 8 * * 1'
+
+# ─── Permissions ────────────────────────────────────────────────────────────
+permissions:
+  contents: read
+  actions: write          # required to upload artifacts
+
+# ─── Environment variables (overridable via inputs) ──────────────────────────
+env:
+  TARGET_URL: ${{ github.event.inputs.target_url || 'https://medlink-1eb0e6f3.web.app' }}
+  VUS:        ${{ github.event.inputs.vus        || '100' }}
+  DURATION:   ${{ github.event.inputs.duration   || '1m'  }}
+
+jobs:
+  # ══════════════════════════════════════════════════════════════════════════
+  #  JOB 1 — Run k6 load test and emit raw JSON results
+  # ══════════════════════════════════════════════════════════════════════════
+  load-test:
+    name: k6 Load Test (100 VUs / 1 min)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    outputs:
+      result_file: ${{ steps.run_k6.outputs.result_file }}
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Install k6 ────────────────────────────────────────────────────────
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring \
+            --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+            --keyserver hkp://keyserver.ubuntu.com:80 \
+            --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" \
+            | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update -qq
+          sudo apt-get install -y k6
+          k6 version
+
+      # ── Create output directories ─────────────────────────────────────────
+      - name: Create output directories
+        run: mkdir -p load-tests/results
+
+      # ── Run k6 ────────────────────────────────────────────────────────────
+      - name: Run k6 baseline load test
+        id: run_k6
+        env:
+          TARGET_URL: ${{ env.TARGET_URL }}
+          K6_VUS:     ${{ env.VUS }}
+          K6_DURATION: ${{ env.DURATION }}
+        run: |
+          echo "result_file=load-tests/results/k6-results.json" >> "$GITHUB_OUTPUT"
+
+          k6 run \
+            --vus       "$K6_VUS" \
+            --duration  "$K6_DURATION" \
+            --out       json=load-tests/results/k6-results.json \
+            --summary-export load-tests/results/k6-summary.json \
+            --env       BASE_URL="$TARGET_URL" \
+            load-tests/medlink-load-test.js \
+          || true          # don't fail the job on threshold breaches — we report them
+
+          echo "✅ k6 run complete"
+          ls -lh load-tests/results/
+
+      # ── Upload raw JSON as intermediate artifact ──────────────────────────
+      - name: Upload raw k6 JSON results
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-raw-json
+          path: |
+            load-tests/results/k6-results.json
+            load-tests/results/k6-summary.json
+          retention-days: 7
+
+  # ══════════════════════════════════════════════════════════════════════════
+  #  JOB 2 — Generate the Excel report from the JSON
+  # ══════════════════════════════════════════════════════════════════════════
+  generate-report:
+    name: Generate Excel Report (500 test cases)
+    runs-on: ubuntu-latest
+    needs: load-test
+    timeout-minutes: 10
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Set up Node.js ────────────────────────────────────────────────────
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: load-tests/package.json
+
+      # ── Download the raw JSON from job 1 ─────────────────────────────────
+      - name: Download raw k6 JSON results
+        uses: actions/download-artifact@v4
+        with:
+          name: k6-raw-json
+          path: load-tests/results
+
+      # ── Install report-generator dependencies ─────────────────────────────
+      - name: Install report dependencies
+        run: npm install
+        working-directory: load-tests
+
+      # ── Generate Excel ────────────────────────────────────────────────────
+      - name: Generate Excel report
+        run: node generate-excel-report.js
+        working-directory: load-tests
+        env:
+          TARGET_URL: ${{ env.TARGET_URL }}
+          VUS:        ${{ env.VUS }}
+          DURATION:   ${{ env.DURATION }}
+          RUN_ID:     ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
+          COMMIT_SHA: ${{ github.sha }}
+          REPO:       ${{ github.repository }}
+
+      # ── List generated files (debug) ──────────────────────────────────────
+      - name: List generated reports
+        run: ls -lh load-tests/results/
+
+      # ── Upload final Excel report ──────────────────────────────────────────
+      - name: Upload Excel load-test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: MedLink-LoadTest-Report
+          path: load-tests/results/MedLink-LoadTest-Report.xlsx
+          retention-days: 90    # keep for 90 days — downloadable from Actions tab
+
+      # ── Upload HTML summary too ────────────────────────────────────────────
+      - name: Upload HTML summary report
+        uses: actions/upload-artifact@v4
+        with:
+          name: MedLink-LoadTest-HTML-Summary
+          path: load-tests/results/MedLink-LoadTest-Summary.html
+          retention-days: 90
+
+      # ── Print summary to job log ───────────────────────────────────────────
+      - name: Print test summary to GitHub Step Summary
+        run: |
+          echo "## 📊 MedLink Load Test Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Parameter | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-----------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Target URL | \`${{ env.TARGET_URL }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Virtual Users | **${{ env.VUS }}** |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Duration | **${{ env.DURATION }}** |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Test Cases | **500** |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Run ID | ${{ github.run_id }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Commit | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "✅ **Excel report available as artifact: \`MedLink-LoadTest-Report\`**" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "> Download from the **Artifacts** section at the bottom of this workflow run." >> "$GITHUB_STEP_SUMMARY"
