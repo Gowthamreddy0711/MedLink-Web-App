@@ -1,241 +1,254 @@
-# 🏥 MedLink – Smart Healthcare & Clinic Continuity Platform
+# 🏥 MedLink Web Application
 
-
-
-## 📖 Overview
-
-MedLink is a smart healthcare platform designed to connect patients and doctors through a secure, modern, and intelligent ecosystem. The platform provides seamless appointment booking, digital prescriptions, queue management, clinic continuity, AI-powered assistance, and real-time notifications across Android and Web applications.
-
-The goal of MedLink is to reduce patient waiting time, improve clinic efficiency, and ensure continuity of care even when doctors are unavailable.
+MedLink is a modern healthcare web application that connects patients, doctors, and administrators through a secure and user-friendly platform. It streamlines appointment scheduling, queue management, digital prescriptions, and healthcare communication while providing a responsive experience across desktop, tablet, and mobile devices.
 
 ---
 
-# ✨ Features
+## ✨ Features
 
-## 👨‍⚕️ Doctor Module
+### 👨‍⚕️ Doctor Module
 
-- Doctor Registration & Login
-- Secure Authentication
-- Dashboard Analytics
+- Secure Doctor Registration & Login
+- Responsive Doctor Dashboard
 - Appointment Management
 - Queue Management
-- Digital Prescription Pad
+- Digital Prescription System
+- Patient Medical History
 - Leave Management
 - Covering Doctor Assignment
-- Patient History
-- Live Availability Status
-- Notification Center
-- AI Assistant
+- Notifications
+- AI Health Assistant
 - Profile Management
 
 ---
 
-## 🧑‍🤝‍🧑 Patient Module
+### 🧑 Patient Module
 
-- Patient Registration & Login
+- Secure Registration & Login
 - Appointment Booking
-- Live Queue Tracking
+- Live Queue Status
 - Digital Prescriptions
-- Medical History
+- Appointment History
 - Doctor Search
 - Reviews & Ratings
-- Appointment Notifications
-- AI Chat Assistant
+- Notifications
+- AI Health Assistant
 - Profile Management
 
 ---
 
-## 👨‍💼 Admin Module
+### 👨‍💼 Admin Module
 
 - Doctor Verification
 - User Management
-- Analytics Dashboard
-- Appointment Monitoring
-- Reports
-- System Notifications
-- Platform Configuration
-
----
-
-# 🤖 AI Features
-
-- AI Health Assistant
-- Smart Appointment Suggestions
-- Intelligent Queue Optimization
-- Doctor Recommendation
-- Automated Notifications
-- Smart Prescription Support
-
----
-
-# 🔒 Security Features
-
-- Firebase Authentication
-- Firestore Security Rules
-- JWT Authentication
-- Role-Based Access Control
-- Secure Cloud Storage
-- Encrypted Communication
-- Password Validation
-- Session Management
-- Input Validation
-- OWASP Security Best Practices
-
----
-
-# 📱 Android Features
-
-- Material Design 3
-- MVVM Architecture
-- Jetpack Compose
-- Room Database
-- Firebase Integration
-- Push Notifications
-- Offline Support
-- Dark Mode
-- Responsive UI
-
----
-
-# 🌐 Web Features
-
-- React + TypeScript
-- Responsive Design
-- Progressive Web App
 - Dashboard Analytics
-- Real-Time Updates
-- Secure Authentication
-- Mobile Friendly
+- Reports & Monitoring
+- System Notifications
 
 ---
 
-# 🛠 Tech Stack
+# 🚀 Technologies Used
 
 ### Frontend
 
 - React
 - TypeScript
-- Tailwind CSS
-- Material UI
+- Vite
+- HTML5
+- CSS3
+- JavaScript (ES6+)
+- Responsive Web Design
 
-### Android
-
-- Kotlin
-- Jetpack Compose
-- MVVM
-- Room Database
-
-### Backend
+### Backend & Services
 
 - Firebase Authentication
 - Cloud Firestore
 - Firebase Storage
-- Cloud Functions
+- Firestore Security Rules
 
-### AI
+### Development Tools
 
-- Google Gemini API
-
-### Tools
-
+- Visual Studio Code
 - Git
 - GitHub
-- Android Studio
-- VS Code
-- Postman
-- Figma
+- npm
 
 ---
 
 # 📂 Project Structure
 
 ```text
-MedLink/
+MedLink-Web/
 │
-├── Android-App/
-├── Web-App/
-├── Firebase/
-├── Documentation/
-├── Assets/
-├── Screenshots/
+├── public/
+├── src/
+├── node-domexception-mock/
+├── .env.example
+├── .gitignore
+├── firebase-applet-config.json
+├── firebase-blueprint.json
+├── firestore.rules
+├── index.html
+├── metadata.json
+├── package.json
+├── package-lock.json
+├── tsconfig.json
+├── vite.config.ts
 └── README.md
 ```
 
 ---
 
-# 🚀 Installation
+# 🔒 Security Features
 
-## Clone Repository
+- Firebase Authentication
+- Secure Firestore Rules
+- Role-Based Access Control
+- Input Validation
+- Password Validation
+- Protected Routes
+- Secure Session Management
+- HTTPS Communication
+
+---
+
+# 🤖 Smart Features
+
+- AI Healthcare Assistant
+- Smart Appointment Scheduling
+- Intelligent Queue Management
+- Real-Time Notifications
+- Digital Prescription Management
+
+---
+
+# 📱 Responsive Design
+
+The application is fully responsive and optimized for:
+
+- Desktop
+- Laptop
+- Tablet
+- Android Phones
+- iPhone
+- Foldable Devices
+
+Supports:
+
+- Responsive Navigation
+- Responsive Dashboard
+- Responsive Forms
+- Responsive Tables
+- Responsive Cards
+- Mobile-Friendly Layout
+- Dark & Light Theme Compatibility
+
+---
+
+# ⚙️ Requirements
+
+- Node.js 18+
+- npm 9+
+- Modern Web Browser
+- Firebase Project Configuration
+
+---
+
+# 🛠 Installation
+
+Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/MedLink.git
+git clone https://github.com/Gowthamreddy0711/MedLink-Web-App.git
 ```
 
-## Android
+Navigate to the project folder
 
 ```bash
-Open Android Studio
-
-Sync Gradle
-
-Run Application
+cd MedLink-Web-App
 ```
 
-## Web
+Install dependencies
 
 ```bash
 npm install
+```
+
+Start the development server
+
+```bash
 npm run dev
+```
+
+Build for production
+
+```bash
+npm run build
+```
+
+Preview production build
+
+```bash
+npm run preview
 ```
 
 ---
 
 # 🧪 Testing
 
-- ✅ Unit Testing
-- ✅ Functional Testing
-- ✅ Integration Testing
-- ✅ UI Testing
-- ✅ Appium Testing
-- ✅ Selenium Testing
-- ✅ API Testing
-- ✅ Validation Testing
-- ✅ Security Testing
-- ✅ Vulnerability Testing
-- ✅ Performance Testing
-- ✅ Load Testing
-- ✅ Stress Testing
+The project supports:
+
+- Unit Testing
+- Functional Testing
+- Validation Testing
+- Selenium Automation
+- API Testing
+- Security Testing
+- Vulnerability Testing
+- Performance Testing
+- Compatibility Testing
+- Accessibility Testing
 
 ---
 
-# 📊 Quality Assurance
+# 📸 Screenshots
 
-- JUnit5
-- Mockito
-- Espresso
-- Appium
-- Selenium
-- REST Assured
-- Postman
-- Newman
-- JMeter
-- SonarQube
-- JaCoCo
-- Android Lint
-- MobSF
-- OWASP Dependency Check
+Add application screenshots here.
+
+```text
+screenshots/
+├── home.png
+├── login.png
+├── doctor-dashboard.png
+├── patient-dashboard.png
+├── appointments.png
+├── queue.png
+└── prescription.png
+```
 
 ---
 
 # 🎯 Future Enhancements
 
 - Video Consultation
-- Wearable Device Integration
-- Health Reports Dashboard
-- AI Disease Prediction
-- E-Prescription Verification
-- Smart Hospital Integration
 - Multi-language Support
+- Progressive Web App (PWA)
+- Smart Health Analytics
+- Advanced AI Features
+- Offline Support
+- Email & SMS Notifications
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Push your branch.
+5. Open a Pull Request.
 
 ---
 
@@ -249,10 +262,12 @@ This project is licensed under the MIT License.
 
 **Gowtham Reddy**
 
-Computer Science Engineering Student
+Computer Science & Engineering Student
 
-Passionate about Healthcare Technology, AI, Mobile Development, and Full Stack Development.
+GitHub: https://github.com/Gowthamreddy0711
 
 ---
 
-⭐ If you like this project, don't forget to star the repository!
+## ⭐ Support
+
+If you found this project useful, please consider giving it a ⭐ on GitHub.
