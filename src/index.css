@@ -143,3 +143,872 @@ div {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+
+/* ==========================================================================
+   AUTH UI SYSTEM
+   Centered, max-width-constrained authentication layout.
+   Covers: 320px → 1920px. Zero business logic — layout & typography only.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Page background & full-height shell
+   -------------------------------------------------------------------------- */
+
+.auth-page-bg {
+  min-height: 100svh;          /* safe-area-aware on iOS */
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #f1f5f9;  /* slate-100 — slightly warmer than raw white */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem 3rem;
+}
+
+/* --------------------------------------------------------------------------
+   Page shell — the centred column that holds topbar + card
+   -------------------------------------------------------------------------- */
+
+.auth-page-shell {
+  width: 100%;
+  max-width: 520px;            /* cap at 520px on all desktops */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Variant: vertically centred (used on GetStarted, Success, Failed) */
+.auth-page-shell--centered {
+  min-height: 100svh;
+  justify-content: center;
+  gap: 2rem;
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+}
+
+@media (min-width: 640px) {
+  .auth-page-shell {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .auth-page-shell {
+    max-width: 520px;
+  }
+  .auth-page-bg {
+    padding-top: 0;
+    justify-content: center;  /* vertically centre the whole form on desktop */
+  }
+}
+
+@media (min-width: 1280px) {
+  .auth-page-shell {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .auth-page-shell {
+    max-width: 560px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Top bar (back button + step/portal label)
+   -------------------------------------------------------------------------- */
+
+.auth-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1.25rem 0 1rem;
+}
+
+.auth-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.375rem;
+  height: 2.375rem;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+
+.auth-back-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateX(-2px);
+}
+
+.auth-back-btn:active {
+  transform: scale(0.95);
+}
+
+.auth-topbar-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #125488;              /* brand blue-600 */
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Brand badge (RoleSelection page) */
+.auth-brand-badge {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0 0.75rem;
+}
+
+.auth-brand-text {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #125488;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   Auth card — the white container wrapping each form
+   -------------------------------------------------------------------------- */
+
+.auth-card {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 1.25rem;      /* 20px */
+  border: 1px solid #e2e8f0;
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.06),
+    0 8px 24px rgba(15, 23, 42, 0.07);
+  padding: 1.5rem;             /* mobile: 24px */
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .auth-card {
+    padding: 2rem;             /* tablet: 32px */
+    border-radius: 1.375rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .auth-card {
+    padding: 2.5rem;           /* desktop: 40px */
+    border-radius: 1.5rem;     /* 24px */
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Card header (title + subtitle)
+   -------------------------------------------------------------------------- */
+
+.auth-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  text-align: center;
+}
+
+.auth-title {
+  font-size: clamp(1.625rem, 4vw, 2.125rem); /* 26px → 34px */
+  font-weight: 800;
+  color: #0d426d;              /* blue-900 */
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.auth-subtitle {
+  font-size: 1rem;             /* 16px */
+  color: #64748b;              /* slate-500 */
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Icon wrap (centred icon above card title)
+   -------------------------------------------------------------------------- */
+
+.auth-icon-wrap {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+.auth-icon-blue  { background-color: #e0effe; }   /* blue-100 */
+.auth-icon-green { background-color: #d1fae5; }   /* emerald-100 */
+.auth-icon-red   { background-color: #fee2e2; }   /* rose-100 */
+
+/* --------------------------------------------------------------------------
+   Form layout
+   -------------------------------------------------------------------------- */
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   Field
+   -------------------------------------------------------------------------- */
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.auth-label {
+  font-size: 0.8125rem;        /* 13px */
+  font-weight: 600;
+  color: #475569;              /* slate-600 */
+  letter-spacing: 0.03em;
+  padding-left: 0.125rem;
+}
+
+.auth-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.auth-forgot-btn {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #125488;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+  min-height: unset;
+}
+
+.auth-forgot-btn:hover {
+  color: #082a4a;
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Input wrapper + input
+   -------------------------------------------------------------------------- */
+
+.auth-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-input-icon {
+  position: absolute;
+  left: 1rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: #94a3b8;              /* slate-400 */
+  pointer-events: none;
+  flex-shrink: 0;
+  transition: color 0.18s;
+}
+
+/* Icon turns brand-blue when field is focused */
+.auth-input-wrap:focus-within .auth-input-icon {
+  color: #125488;
+}
+
+.auth-input {
+  width: 100%;
+  height: 3.375rem;            /* 54px */
+  padding: 0 1rem 0 2.875rem; /* 16px right, icon-offset left */
+  font-size: 1rem;             /* 16px */
+  font-weight: 500;
+  color: #082a4a;              /* blue-950 */
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.875rem;     /* 14px */
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  box-sizing: border-box;
+  min-height: unset;           /* override global min-height:44px on inputs */
+}
+
+.auth-input::placeholder {
+  font-size: 0.9375rem;        /* 15px */
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.auth-input:focus {
+  border-color: #125488;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(18, 84, 136, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   Primary button
+   -------------------------------------------------------------------------- */
+
+.auth-btn-primary {
+  width: 100%;
+  height: 3.375rem;            /* 54px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #125488;         /* brand blue-600 */
+  color: #ffffff;
+  font-size: 1rem;             /* 16px */
+  font-weight: 600;
+  border: none;
+  border-radius: 0.875rem;     /* 14px */
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(18, 84, 136, 0.25);
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  letter-spacing: 0.01em;
+  box-sizing: border-box;
+  min-height: unset;
+}
+
+.auth-btn-primary:hover:not(:disabled) {
+  background: #025ca2;
+  box-shadow: 0 6px 20px rgba(18, 84, 136, 0.32);
+}
+
+.auth-btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.auth-btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   Outline / secondary button
+   -------------------------------------------------------------------------- */
+
+.auth-btn-outline {
+  width: 100%;
+  height: 3.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #ffffff;
+  color: #334155;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.875rem;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+  box-sizing: border-box;
+  min-height: unset;
+}
+
+.auth-btn-outline:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.auth-btn-outline:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Ghost / text button */
+.auth-btn-ghost {
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  background: none;
+  color: #125488;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+  box-sizing: border-box;
+  min-height: unset;
+}
+
+.auth-btn-ghost:hover:not(:disabled) {
+  background: #f0f7ff;
+}
+
+.auth-btn-ghost:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Small link button */
+.auth-link-btn {
+  background: none;
+  border: none;
+  color: #125488;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.25rem;
+  text-align: center;
+  transition: color 0.15s;
+  min-height: unset;
+}
+
+.auth-link-btn:hover {
+  color: #082a4a;
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Divider with switch-account link
+   -------------------------------------------------------------------------- */
+
+.auth-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  padding-top: 0.25rem;
+}
+
+.auth-divider-text {
+  font-size: 0.9375rem;
+  color: #64748b;
+}
+
+.auth-switch-btn {
+  background: none;
+  border: none;
+  color: #125488;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+  min-height: unset;
+}
+
+.auth-switch-btn:hover {
+  color: #082a4a;
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Error, debug, and feedback messages
+   -------------------------------------------------------------------------- */
+
+.auth-error {
+  padding: 0.875rem 1rem;
+  background: #fef2f2;         /* red-50 */
+  border: 1px solid #fecaca;   /* red-200 */
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #dc2626;              /* red-600 */
+  line-height: 1.4;
+}
+
+.auth-debug-box {
+  padding: 0.875rem 1rem;
+  background: #fffbeb;         /* amber-50 */
+  border: 1px solid #fde68a;   /* amber-200 */
+  border-radius: 0.75rem;
+  text-align: center;
+}
+
+.auth-debug-label {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: #d97706;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+}
+
+.auth-debug-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #b45309;
+  letter-spacing: 0.4em;
+}
+
+.auth-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-style: solid;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.auth-message--success {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.auth-message--info {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.auth-message--error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+/* --------------------------------------------------------------------------
+   Privacy / security notice block
+   -------------------------------------------------------------------------- */
+
+.auth-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.875rem 1rem;
+  background: #eff6ff;         /* blue-50 */
+  border: 1px solid #bfdbfe;  /* blue-200 */
+  border-radius: 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   Security footer note
+   -------------------------------------------------------------------------- */
+
+.auth-secure-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  padding: 1rem 0;
+}
+
+.auth-footer-note {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: #94a3b8;
+  padding: 0.75rem 0;
+}
+
+/* --------------------------------------------------------------------------
+   OTP grid
+   -------------------------------------------------------------------------- */
+
+.otp-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+}
+
+.otp-input {
+  width: 100%;
+  aspect-ratio: 1;             /* perfect square at any width */
+  min-height: unset;
+  max-height: 3.5rem;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.75rem;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0d426d;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.otp-input:focus {
+  border-color: #125488;
+  box-shadow: 0 0 0 3px rgba(18, 84, 136, 0.12);
+  background: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Role selection grid + cards
+   -------------------------------------------------------------------------- */
+
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem;
+  width: 100%;
+}
+
+/* Stack on very narrow screens */
+@media (max-width: 359px) {
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.role-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.375rem 1.25rem;
+  border-radius: 1.125rem;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+  min-height: 11rem;
+}
+
+@media (min-width: 640px) {
+  .role-card {
+    padding: 1.75rem;
+    border-radius: 1.25rem;
+  }
+}
+
+.role-card:focus-visible {
+  outline: 2px solid #125488;
+  outline-offset: 2px;
+}
+
+.role-card-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.role-card-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0d426d;
+  margin: 0 0 0.375rem;
+  line-height: 1.25;
+}
+
+.role-card-desc {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   File upload zone
+   -------------------------------------------------------------------------- */
+
+.upload-zone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  border: 2px dashed #cbd5e1;
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  min-height: 9rem;
+}
+
+.upload-zone--empty {
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.upload-zone--empty:hover {
+  border-color: #125488;
+  background: #eff6ff;
+}
+
+.upload-zone--uploaded {
+  background: #f0fdf4;
+  border-color: #86efac;       /* green-300 */
+  cursor: default;
+}
+
+/* --------------------------------------------------------------------------
+   Status icon (Success / Failed pages)
+   -------------------------------------------------------------------------- */
+
+.status-icon-wrap {
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+
+.status-icon-wrap--success {
+  background: #d1fae5;         /* emerald-100 */
+}
+
+.status-icon-wrap--error {
+  background: #fee2e2;         /* rose-100 */
+}
+
+/* --------------------------------------------------------------------------
+   Get Started page specifics
+   -------------------------------------------------------------------------- */
+
+.gs-headline {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 800;
+  color: #0d426d;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.gs-subline {
+  font-size: clamp(0.9375rem, 2vw, 1.0625rem);
+  color: #64748b;
+  line-height: 1.6;
+  max-width: 38ch;
+  margin: 0.75rem auto 0;
+}
+
+.gs-features {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.gs-feature-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.375rem 0.875rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 99px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* --------------------------------------------------------------------------
+   Splash screen
+   -------------------------------------------------------------------------- */
+
+.splash-bg {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  background: #ffffff;
+}
+
+.splash-tagline {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #38a9f8;              /* blue-400 */
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.splash-bar {
+  width: 6rem;
+  height: 3px;
+  background: linear-gradient(90deg, #125488, #38a9f8);
+  border-radius: 99px;
+  transform-origin: left center;
+  margin-top: 0.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive tweaks — mobile small (320–374px)
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 374px) {
+  .auth-card {
+    padding: 1.25rem;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+  }
+
+  .auth-input {
+    height: 3rem;
+    font-size: 0.9375rem;
+  }
+
+  .auth-btn-primary,
+  .auth-btn-outline {
+    height: 3rem;
+    font-size: 0.9375rem;
+  }
+
+  .otp-input {
+    max-height: 3rem;
+    font-size: 1.125rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive tweaks — tablet (768px+)
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .auth-page-bg {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .auth-topbar {
+    padding: 1.5rem 0 1.125rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive tweaks — large desktop (1440px+)
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1440px) {
+  .auth-page-bg {
+    padding-top: 0;
+  }
+}

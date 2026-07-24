@@ -7,6 +7,8 @@ import { cn } from '../../lib/utils';
 
 export default function VerifyIDScreen() {
   const navigate = useNavigate();
+
+  // ── Business logic state (unchanged) ─────────────────────────────────────
   const [isUploading, setIsUploading] = useState(false);
   const [medicalId, setMedicalId] = useState('');
   const [file, setFile] = useState<File | null>(null);
@@ -14,119 +16,124 @@ export default function VerifyIDScreen() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
-    
-    // Simulate verification process
     setTimeout(() => {
       setIsUploading(false);
-      // Successful ID verification for streamlined onboarding experience
       navigate(ROUTES.VERIFICATION_SUCCESS);
     }, 150);
   };
+  // ─────────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50">
-      <header className="px-6 py-6 bg-white border-b border-slate-100 sticky top-0 z-10 flex items-center justify-between">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-slate-600 bg-slate-50 rounded-xl">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <span className="text-sm font-bold text-blue-600 uppercase tracking-widest">Step 2 of 2</span>
-      </header>
+    <div className="auth-page-bg">
+      <div className="auth-page-shell">
 
-      <div className="px-8 mt-8 pb-12">
-        <div className="mb-8">
-          <h2 className="text-3xl font-extrabold text-blue-900 tracking-tight">Identity Verification</h2>
-          <p className="mt-2 text-slate-500 font-medium">
-            To ensure patient safety, we need to verify your medical credentials.
-          </p>
+        {/* Top bar */}
+        <div className="auth-topbar">
+          <button onClick={() => navigate(-1)} className="auth-back-btn" aria-label="Go back">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <span className="auth-topbar-label">Step 2 of 2</span>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Medical Registration ID</label>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <FileText className="h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+        {/* Card */}
+        <div className="auth-card">
+          <div className="auth-card-header">
+            <h1 className="auth-title">Identity Verification</h1>
+            <p className="auth-subtitle">
+              To ensure patient safety, we need to verify your medical credentials.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="auth-form">
+            {/* Medical Registration ID */}
+            <div className="auth-field">
+              <label className="auth-label">Medical Registration ID</label>
+              <div className="auth-input-wrap">
+                <FileText className="auth-input-icon" />
+                <input
+                  type="text"
+                  placeholder="REG-12345-MED"
+                  className="auth-input uppercase"
+                  value={medicalId}
+                  onChange={(e) => setMedicalId(e.target.value)}
+                  required
+                />
               </div>
-              <input 
-                type="text"
-                placeholder="REG-12345-MED"
-                className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all text-blue-950 font-medium uppercase"
-                value={medicalId}
-                onChange={(e) => setMedicalId(e.target.value)}
-                required
-              />
             </div>
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Practice License Document</label>
-            <div 
-              className={cn(
-                "relative border-2 border-dashed rounded-3xl p-8 flex flex-col items-center justify-center transition-all",
-                file ? "border-emerald-200 bg-emerald-50/30" : "border-slate-200 bg-white hover:border-blue-400 py-12"
-              )}
+            {/* File upload */}
+            <div className="auth-field">
+              <label className="auth-label">Practice License Document</label>
+              <div
+                className={cn(
+                  'upload-zone',
+                  file ? 'upload-zone--uploaded' : 'upload-zone--empty',
+                )}
+              >
+                {file ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="p-2.5 bg-emerald-100 text-emerald-600 rounded-full">
+                      <CheckCircle2 className="w-7 h-7" />
+                    </div>
+                    <span className="text-sm font-semibold text-slate-700 text-center break-all max-w-[240px]">
+                      {file.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setFile(null)}
+                      className="text-xs font-semibold text-rose-500 hover:text-rose-700 transition-colors"
+                    >
+                      Remove file
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+                      <Upload className="w-7 h-7" />
+                    </div>
+                    <p className="text-sm font-semibold text-blue-900 text-center">
+                      Upload License Copy
+                    </p>
+                    <p className="text-xs text-slate-400">PDF / JPG / PNG · Max 5 MB</p>
+                    <input
+                      type="file"
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      required
+                    />
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Security note */}
+            <div className="auth-notice">
+              <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-blue-900 mb-0.5">Secure Verification</p>
+                <p className="text-xs text-blue-700 leading-relaxed">
+                  Your documents are encrypted and only accessible by our medical vetting team.
+                  Verification usually takes 2–4 hours.
+                </p>
+              </div>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={isUploading || !file || !medicalId}
+              className="auth-btn-primary"
             >
-              {file ? (
-                <div className="flex flex-col items-center">
-                  <div className="p-3 bg-emerald-100 text-emerald-600 rounded-full mb-3">
-                    <CheckCircle2 className="w-8 h-8" />
-                  </div>
-                  <span className="text-sm font-bold text-slate-700">{file.name}</span>
-                  <button 
-                    type="button"
-                    onClick={() => setFile(null)}
-                    className="mt-2 text-xs font-bold text-rose-500 hover:underline"
-                  >
-                    Remove File
-                  </button>
-                </div>
+              {isUploading ? (
+                <><Loader2 className="w-5 h-5 animate-spin" /><span>Verifying…</span></>
               ) : (
-                <>
-                  <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl mb-4">
-                    <Upload className="w-8 h-8" />
-                  </div>
-                  <span className="text-sm font-bold text-blue-900">Upload License Copy (PDF/JPG)</span>
-                  <span className="mt-2 text-xs text-slate-400 font-medium">Max file size: 5MB</span>
-                  <input 
-                    type="file" 
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    required
-                  />
-                </>
+                'Submit for Approval'
               )}
-            </div>
-          </div>
-
-          <div className="p-5 bg-blue-50 border border-blue-100 rounded-3xl flex items-start gap-4">
-            <div className="p-3 bg-blue-100 text-blue-600 rounded-2xl">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-blue-950">Secure Verification</h4>
-              <p className="mt-1 text-[11px] text-blue-700 leading-relaxed font-semibold">
-                Your documents are encrypted and only accessible by our medical vetting team. Verification usually takes 2-4 hours.
-              </p>
-            </div>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            disabled={isUploading || !file || !medicalId}
-            className="w-full bg-blue-600 text-white font-bold py-5 rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-blue-200 mt-4 disabled:opacity-70 text-lg"
-          >
-            {isUploading ? (
-              <>
-                <Loader2 className="w-6 h-6 animate-spin" />
-                <span>Verifying...</span>
-              </>
-            ) : (
-              'Submit for Approval'
-            )}
-          </motion.button>
-        </form>
+            </motion.button>
+          </form>
+        </div>
       </div>
     </div>
   );
