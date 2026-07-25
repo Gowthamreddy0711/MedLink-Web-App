@@ -61,14 +61,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+
       - name: Build production preview
         run: |
           npm run build
           nohup npm run preview -- --host 127.0.0.1 --port 4173 > preview.log 2>&1 &
-          sleep 6
-
-      - name: Install Playwright browsers
-        run: npx playwright install chromium
+          sleep 10
+          curl --retry 5 --retry-delay 2 --silent --show-error --fail http://127.0.0.1:4173
 
       - name: Run Playwright smoke tests
         env:
