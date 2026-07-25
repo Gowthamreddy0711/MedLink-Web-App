@@ -21,6 +21,7 @@
     "test:performance": "vitest run tests/unit/performance.test.ts --reporter=verbose",
     "test:accessibility": "vitest run tests/unit/accessibility.test.ts --reporter=verbose",
     "test:responsive": "vitest run tests/unit/responsive.test.ts --reporter=verbose",
+    "playwright:install": "npx playwright install chromium webkit",
     "test:e2e": "playwright test",
     "test:e2e:report": "playwright show-report",
     "qa:report": "node qa-report/generate-qa-report.js",
