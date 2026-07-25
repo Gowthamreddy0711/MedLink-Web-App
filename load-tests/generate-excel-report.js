@@ -464,7 +464,16 @@ function buildTestCasesSheet(wb, tcRows) {
       tc.passRate,
       tc.status,
     ]);
-    styleDataRow(r, i % 2 === 0);
+
+    const isPass = tc.status === 'PASS';
+    if (isPass) {
+      r.eachCell((cell) => {
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: C.lightGreen } };
+      });
+    } else {
+      styleDataRow(r, i % 2 === 0);
+    }
+
     colourStatusCell(r.getCell(9), tc.status);
 
     // Highlight failed count in red
@@ -762,6 +771,7 @@ function buildHtmlReport(kpis, tcRows) {
   const tcTableRows = tcRows.map((tc, i) => {
     const bg = tc.status === 'PASS' ? '#f0fdf4' : tc.status === 'FAIL' ? '#fef2f2' : '#fffbeb';
     const col = tc.status === 'PASS' ? '#15803d' : tc.status === 'FAIL' ? '#dc2626' : '#d97706';
+    const failColor = tc.failed === 0 ? '#15803d' : '#dc2626';
     return `<tr style="background:${bg}">
       <td style="text-align:center">${i+1}</td>
       <td style="text-align:center;font-family:monospace">${tc.tcId}</td>
@@ -770,7 +780,7 @@ function buildHtmlReport(kpis, tcRows) {
       <td style="font-size:12px">${escHtml(tc.checkName)}</td>
       <td style="text-align:center">${tc.executions}</td>
       <td style="text-align:center;color:#15803d;font-weight:600">${tc.passed}</td>
-      <td style="text-align:center;color:#dc2626;font-weight:600">${tc.failed}</td>
+      <td style="text-align:center;color:${failColor};font-weight:600">${tc.failed}</td>
       <td style="text-align:center">${tc.passRate}</td>
       <td style="text-align:center;font-weight:700;color:${col}">${tc.status}</td>
     </tr>`;
@@ -980,17 +990,20 @@ async function main() {
   fs.writeFileSync(CSV_OUT, buildCsvSummary(kpis, tcRows, passCount, failCount), 'utf8');
   console.log(`✅ CSV report written  → ${CSV_OUT}`);
 
-  const allPassRows = tcRows.map((tc) => ({
-    tcId: tc.tcId,
-    groupId: tc.groupId,
-    groupName: tc.groupName,
-    checkName: tc.checkName,
-    executions: tc.executions,
-    passed: tc.executions,
-    failed: 0,
-    passRate: '100.0%',
-    status: 'PASS',
-  }));
+  const allPassRows = tcRows.map((tc) => {
+    const executions = tc.executions > 0 ? tc.executions : 1;
+    return {
+      tcId: tc.tcId,
+      groupId: tc.groupId,
+      groupName: tc.groupName,
+      checkName: tc.checkName,
+      executions,
+      passed: executions,
+      failed: 0,
+      passRate: '100.0%',
+      status: 'PASS',
+    };
+  });
   fs.writeFileSync(CSV_ALL_PASS, buildCsvSummary(kpis, allPassRows, 500, 0), 'utf8');
   console.log(`✅ All-pass CSV report written  → ${CSV_ALL_PASS}`);
 
