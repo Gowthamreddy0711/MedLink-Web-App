@@ -1,0 +1,57 @@
+name: MedLink Selenium + Appium Automation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    paths:
+      - 'automation/**'
+      - '.github/workflows/automation.yml'
+      - 'package.json'
+
+jobs:
+  automation-suite:
+    name: Selenium/Appium QA Automation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate Selenium automation catalog
+        run: node automation/selenium/seleniumRunner.js
+
+      - name: Generate Appium automation catalog
+        run: node automation/appium/appiumRunner.js
+
+      - name: Build Excel automation report
+        run: node automation/reportGenerator.js
+
+      - name: Run unit regression test for automation catalog
+        run: npx vitest run tests/unit/automation-report.test.ts
+
+      - name: Upload automation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: medlink-automation-artifacts
+          path: |
+            test-results/selenium/**
+            test-results/appium/**
+            test-results/automation-reports/**
+          retention-days: 60
+
+      - name: Write workflow summary
+        run: |
+          echo "## 🧪 MedLink Automation Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Selenium catalog: 500 scenarios generated" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Appium catalog: 500 scenarios generated" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Excel report: MedLink-Automation-Report.xlsx" >> "$GITHUB_STEP_SUMMARY"
