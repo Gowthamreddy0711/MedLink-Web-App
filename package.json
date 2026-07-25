@@ -2,6 +2,7 @@
   "name": "medlink-web-app",
   "private": true,
   "version": "1.0.0",
+  "homepage": "https://gowthamreddy0711.github.io/MedLink-Web-App",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
@@ -25,6 +26,9 @@
     "test:e2e": "playwright test",
     "test:e2e:report": "playwright show-report",
     "qa:report": "node qa-report/generate-qa-report.js",
+    "copy-404": "node scripts/copy404.js",
+    "predeploy": "npm run build && npm run copy-404",
+    "deploy": "gh-pages -d dist",
     "test:all": "vitest run --reporter=verbose --reporter=junit --outputFile=test-results/junit.xml",
     "test:ci": "vitest run --coverage --reporter=verbose --reporter=junit --outputFile=test-results/junit.xml && npm run qa:report",
     "test:security:500": "vitest run tests/unit/security-500.test.ts --reporter=verbose --reporter=junit --outputFile=test-results/junit.xml",
@@ -58,6 +62,7 @@
   "devDependencies": {
     "@playwright/test": "1.49.1",
     "@testing-library/dom": "^10.4.1",
+    "gh-pages": "^5.0.0",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.1.0",
     "@testing-library/user-event": "14.5.2",
