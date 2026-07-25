@@ -49,9 +49,4 @@ jobs:
           retention-days: 60
 
       - name: Write workflow summary
-        run: |
-          echo "## 🧪 MedLink Automation Summary" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Selenium catalog: 500 scenarios generated" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Appium catalog: 500 scenarios generated" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Excel report: MedLink-Automation-Report.xlsx" >> "$GITHUB_STEP_SUMMARY"
+        run: node automation/actionSummary.js
