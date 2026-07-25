@@ -54,7 +54,7 @@ jobs:
     steps:
       # ── Checkout ──────────────────────────────────────────────────────────
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # ── Install k6 ────────────────────────────────────────────────────────
       - name: Install k6
@@ -98,7 +98,7 @@ jobs:
 
       # ── Upload raw JSON as intermediate artifact ──────────────────────────
       - name: Upload raw k6 JSON results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: k6-raw-json
           path: |
@@ -118,11 +118,11 @@ jobs:
     steps:
       # ── Checkout ──────────────────────────────────────────────────────────
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # ── Set up Node.js ────────────────────────────────────────────────────
       - name: Set up Node.js 24
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '24'
           cache: 'npm'
@@ -130,7 +130,7 @@ jobs:
 
       # ── Download the raw JSON from job 1 ─────────────────────────────────
       - name: Download raw k6 JSON results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: k6-raw-json
           path: load-tests/results
@@ -193,7 +193,7 @@ jobs:
 
       # ── Upload final Excel report ──────────────────────────────────────────
       - name: Upload Excel load-test report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: MedLink-LoadTest-Report
           path: load-tests/results/MedLink-LoadTest-Report.xlsx
@@ -201,14 +201,14 @@ jobs:
 
       # ── Upload HTML summary too ────────────────────────────────────────────
       - name: Upload HTML summary report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: MedLink-LoadTest-HTML-Summary
           path: load-tests/results/MedLink-LoadTest-Summary.html
           retention-days: 90
       # ── Upload CSV summary report too ─────────────────────────────────────────────────────
       - name: Upload CSV summary report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: MedLink-LoadTest-Summary-CSV
           path: |

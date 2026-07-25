@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js 24
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '24'
           cache: 'npm'
@@ -36,7 +36,7 @@ jobs:
         run: npx vitest run tests/unit/automation-report.test.ts
 
       - name: Upload Selenium artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: selenium-automation-artifacts
           path: |
