@@ -1,4 +1,4 @@
-name: MedLink Selenium + Appium Automation
+name: MedLink Selenium Automation
 
 on:
   workflow_dispatch:
@@ -11,16 +11,16 @@ on:
 
 jobs:
   automation-suite:
-    name: Selenium/Appium QA Automation
+    name: Selenium QA Automation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 20
+      - name: Set up Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
@@ -29,24 +29,21 @@ jobs:
       - name: Generate Selenium automation catalog
         run: node automation/selenium/seleniumRunner.js
 
-      - name: Generate Appium automation catalog
-        run: node automation/appium/appiumRunner.js
-
-      - name: Build Excel automation report
-        run: node automation/reportGenerator.js
+      - name: Build Selenium Excel report
+        run: node automation/selenium/seleniumReportGenerator.js
 
       - name: Run unit regression test for automation catalog
         run: npx vitest run tests/unit/automation-report.test.ts
 
-      - name: Upload automation artifacts
+      - name: Upload Selenium artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: medlink-automation-artifacts
+          name: selenium-automation-artifacts
           path: |
             test-results/selenium/**
-            test-results/appium/**
-            test-results/automation-reports/**
+            test-results/automation-reports/Selenium-Automation-Report.xlsx
+            test-results/automation-reports/Selenium-Automation-Report.json
           retention-days: 60
 
       - name: Write workflow summary
-        run: node automation/actionSummary.js
+        run: node automation/actionSummarySelenium.js
